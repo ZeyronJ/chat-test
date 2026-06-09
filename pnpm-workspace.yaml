@@ -1,0 +1,13 @@
+allowBuilds:
+  msw: true
+  sharp: true
+minimumReleaseAgeExclude:
+  - '@ai-sdk/gateway@3.0.126'
+  - '@ai-sdk/react@3.0.200'
+  - '@supabase/auth-js@2.108.0'
+  - '@supabase/functions-js@2.108.0'
+  - '@supabase/postgrest-js@2.108.0'
+  - '@supabase/realtime-js@2.108.0'
+  - '@supabase/storage-js@2.108.0'
+  - '@supabase/supabase-js@2.108.0'
+  - ai@6.0.198
