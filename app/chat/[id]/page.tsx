@@ -47,7 +47,7 @@ export default function ChatPage() {
         <aside className='flex flex-col border-b border-border md:border-b-0 md:border-r'>
           <div className='border-b border-border px-4 py-3'>
             <p className='text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-              Huéspedes simulados
+              Conversaciones WhatsApp
             </p>
           </div>
           <div className='flex-1 overflow-y-auto'>

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import type { MensajeHistorial, Usuario } from "@/lib/types"
 import { horaCorta, inicial, SEGMENTO_BADGE } from "@/lib/ui-helpers"
-import { Bot, Send, User, Headset, SlidersHorizontal, Trash2, CheckCircle } from "lucide-react"
+import { Bot, Send, User, Headset, SlidersHorizontal, Trash2, CheckCircle, Smartphone } from "lucide-react"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
@@ -52,11 +52,16 @@ const BURBUJA: Record<
     icono: Headset,
     etiqueta: "Transferencia a humano",
   },
+  whatsapp: {
+    lado: "izq",
+    clase: "bg-card text-card-foreground",
+    icono: Smartphone,
+    etiqueta: "WhatsApp",
+  },
 }
 
 export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
   const [texto, setTexto] = useState("")
-  const [modoAgente, setModoAgente] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [reiniciando, setReiniciando] = useState(false)
   const [resolviendo, setResolviendo] = useState(false)
@@ -88,10 +93,6 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
   }, [historial.length])
 
-  useEffect(() => {
-    setModoAgente(!usuario.ia_activa)
-  }, [usuario.telefono_simulado, usuario.ia_activa])
-
   async function enviar(e: React.FormEvent) {
     e.preventDefault()
     const mensaje = texto.trim()
@@ -99,11 +100,10 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
     setTexto("")
     setEnviando(true)
 
-    const endpoint = modoAgente ? "/api/agente" : "/api/chat"
     const optimisticMessage: MensajeHistorial = {
       id: Date.now(),
       telefono_simulado: usuario.telefono_simulado,
-      remitente: modoAgente ? "humano" : "usuario",
+      remitente: "humano",
       mensaje,
       created_at: new Date().toISOString(),
     }
@@ -116,7 +116,7 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
     )
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/agente", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -125,16 +125,8 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
         }),
       })
       if (!res.ok) throw new Error("Error al enviar")
-      const responseData = await res.json()
-
       await mutate()
-
-      if (responseData?.escalado) {
-        setModoAgente(true)
-        setTimeout(() => onCambioEstado(), 2500)
-      } else {
-        onCambioEstado()
-      }
+      onCambioEstado()
     } finally {
       setEnviando(false)
     }
@@ -207,15 +199,6 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
               Caso resuelto
             </Button>
           )}
-          <Button
-            size="sm"
-            variant={modoAgente ? "default" : "outline"}
-            onClick={() => setModoAgente((v) => !v)}
-            className="gap-1.5"
-          >
-            <Headset className="size-3.5" />
-            {modoAgente ? "Modo agente" : "Modo huésped"}
-          </Button>
         </div>
       </header>
 
@@ -269,7 +252,7 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
             </div>
           )
         })}
-        {enviando && !modoAgente && (
+        {enviando && (
           <div className="flex justify-start">
             <div className="rounded-2xl bg-card px-3 py-2 text-sm text-muted-foreground">
               <span className="inline-flex gap-1">
@@ -290,11 +273,7 @@ export function VentanaChat({ usuario, casoActivoId, onCambioEstado }: Props) {
         <input
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          placeholder={
-            modoAgente
-              ? "Responder como agente humano…"
-              : `Mensaje como ${usuario.nombre}…`
-          }
+          placeholder="Responder como agente humano…"
           className="flex-1 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring/40"
         />
         <Button

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { Usuario } from "@/lib/types"
 import { inicial, SEGMENTO_BADGE } from "@/lib/ui-helpers"
+import { Smartphone } from "lucide-react"
 
 interface Props {
   usuarios: Usuario[]
@@ -36,9 +37,12 @@ export function ListaUsuarios({ usuarios, seleccionado, onSelect }: Props) {
                 <p className="truncate text-sm font-medium text-foreground">
                   {u.nombre}
                 </p>
-                {!u.ia_activa && (
-                  <span className="size-2 shrink-0 rounded-full bg-primary" title="Atendido por humano" />
-                )}
+                <div className="flex items-center gap-1">
+                  {!u.ia_activa && (
+                    <span className="size-2 shrink-0 rounded-full bg-primary" title="Atendido por humano" />
+                  )}
+                  {u.wa_id && <span title="WhatsApp"><Smartphone className="size-3 text-green-500" /></span>}
+                </div>
               </div>
               <div className="mt-1 flex items-center gap-2">
                 <Badge

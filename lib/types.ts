@@ -1,12 +1,13 @@
 export type Segmento = "VIP" | "Corporativo" | "Hospitalidades" | "General"
 
-export type Remitente = "usuario" | "bot" | "humano" | "sistema" | "human_transfer"
+export type Remitente = "usuario" | "bot" | "humano" | "sistema" | "human_transfer" | "whatsapp"
 
 export type EstatusCaso = "abierto" | "en_proceso" | "resuelto"
 
 export interface Usuario {
   id: string
   telefono_simulado: string
+  wa_id: string | null
   nombre: string
   segmento: Segmento
   ia_activa: boolean
