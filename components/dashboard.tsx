@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { SEGMENTO_BADGE } from "@/lib/ui-helpers"
 import type { Caso, EstatusCaso } from "@/lib/types"
 import {
   MessageSquare,
@@ -167,7 +168,7 @@ export function Dashboard({ onCambio }: { onCambio: () => void }) {
                     className="mt-2 h-7 text-xs"
                     onClick={async () => {
                       await actualizarCaso(c.id, "en_proceso")
-                      router.push(`/?usuario=${c.usuarios?.id}`)
+                      router.push(`/chat/${c.usuarios?.id}`)
                     }}
                   >
                     Tomar caso
